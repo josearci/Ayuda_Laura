@@ -1,8 +1,8 @@
+import base64
 import calendar
 import pandas as pd
 import streamlit as st
 from datetime import datetime, timedelta
-import openpyxl  # Ensure this is installed
 
 rules = {
     "onsite": {
@@ -127,62 +127,23 @@ if __name__ == "__main__":
                 args=(i,),
             )
 
-    # Export to Excel button
-    st.button(
-        "Export to Excel", on_click=export_to_excel, args=(st.session_state["items"],)
-    )
-    
     # Main page for scrollable calendar
     st.write(f"## Scrollable Calendar")
 
     # Use the entire width of the website
-    st.markdown(
-        """
-        <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-        }
-        .reportview-container .main .block-container{
-            max-width: 100%;
-            padding-top: 0rem;
-            padding-right: 1rem;
-            padding-left: 1rem;
-            padding-bottom: 0rem;
-            background-color: #121212;
-            color: #ffffff;
-        }
-        .sidebar .sidebar-content {
-            background-color: #1f1f1f;
-            color: #ffffff;
-        }
-        .sidebar .sidebar-content .block-container {
-            background-color: #1f1f1f;
-            color: #ffffff;
-        }
-        .dataframe {
-            height: 600px;
-            overflow-y: scroll;
-            background-color: #1e1e1e;
-            color: #ffffff;
-        }
-        .dataframe th {
-            background: #333333;
-            position: sticky;
-            top: 0;
-            color: #ffffff;
-        }
-        .dataframe td, .dataframe th {
-            width: 14.28%;
-            text-align: center;
-            height: 100px; /* Adjust this value to increase height */
-        }
-        .dataframe td {
-            font-size: 16px; /* Adjust this value to change text size */
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
+    # Export to CSV button
+    def export_to_csv(items):
+        df = pd.DataFrame(items)
+        df = df[["name", "visit_date", "type"]]
+        df.columns = ["Name", "Date", "Type of Visit"]
+        csv = df.to_csv(index=False)
+        b64 = base64.b64encode(csv.encode()).decode()  # Convert DataFrame to base64 encoding
+        href = f'<a href="data:file/csv;base64,{b64}" download="schedule.csv">Download CSV</a>'
+        st.markdown(href, unsafe_allow_html=True)
+        st.success("Schedule exported to schedule.csv")
+
+    st.button(
+        "Export to CSV", on_click=export_to_csv, args=(st.session_state["items"],)
     )
 
     # Display the calendar for the next 3 years
