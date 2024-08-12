@@ -6,13 +6,13 @@ from datetime import datetime, timedelta
 
 rules = {
     "onsite": {
-        "1to20": 7,
-        "21to50": 5,
+        "1to20": 8,
+        "21to50": 6,
         "+50": 4,
     },
     "remote": {
-        "1to20": 3,
-        "21to50": 3,
+        "1to20": 2,
+        "21to50": 2,
         "+50": 2,
     },
 }
